@@ -15,9 +15,11 @@ REPOSITORY_LOCATIONS_SPEC = dict(
         project_name = "Gazelle",
         project_desc = "Bazel BUILD file generator for Go projects",
         project_url = "https://github.com/bazelbuild/bazel-gazelle",
-        version = "0.22.2",
-        sha256 = "b85f48fa105c4403326e9525ad2b2cc437babaa6e15a3fc0b1dbab0ab064bc7c",
-        urls = ["https://github.com/bazelbuild/bazel-gazelle/releases/download/v{version}/bazel-gazelle-v{version}.tar.gz"],
+        # Fork of 0.22.2 with Illumos / Solaris support added.
+        version = "3b638f9b0486c85576fe8630bc78e71c03ce2f0f",
+        sha256 = "2dd36f1dff1441fcf6700f29718d63a11b3e7e301d56ab4a4727263a655ccd3a",
+        strip_prefix = "bazel-gazelle-{version}",
+        urls = ["https://github.com/bazelbuild/bazel-gazelle/archive/{version}.tar.gz"],
         release_date = "2020-10-02",
         use_category = ["build"],
     ),
@@ -76,16 +78,16 @@ REPOSITORY_LOCATIONS_SPEC = dict(
         project_name = "BoringSSL",
         project_desc = "Minimal OpenSSL fork",
         project_url = "https://github.com/google/boringssl",
+        version = "6c0ad25a3a483d6910c2a28a6d03b4f139b927fe",
+        sha256 = "a17c298a8806564fa9ea2716408b8d55d5863f8a13900f993963bb89822c586a",
+        strip_prefix = "boringssl-{version}",
         # To update BoringSSL, which tracks Chromium releases:
         # 1. Open https://omahaproxy.appspot.com/ and note <current_version> of linux/stable release.
         # 2. Open https://chromium.googlesource.com/chromium/src/+/refs/tags/<current_version>/DEPS and note <boringssl_revision>.
         # 3. Find a commit in BoringSSL's "master-with-bazel" branch that merges <boringssl_revision>.
         #
         # chromium-90.0.4395.0(linux/dev)
-        version = "b049eae83d25977661556dcd913b35fbafb3a93a",
-        sha256 = "d78f7b11b8665feea1b6def8e6f235ad8671db8de950f5429f1bf2b3503b3894",
-        strip_prefix = "boringssl-{version}",
-        urls = ["https://github.com/google/boringssl/archive/{version}.tar.gz"],
+        urls = ["https://github.com/siepkes/boringssl/archive/{version}.tar.gz"],
         use_category = ["controlplane", "dataplane_core"],
         release_date = "2021-01-25",
         cpe = "cpe:2.3:a:google:boringssl:*",
@@ -228,9 +230,11 @@ REPOSITORY_LOCATIONS_SPEC = dict(
         project_desc = "tcmalloc and profiling libraries",
         project_url = "https://github.com/gperftools/gperftools",
         version = "2.8",
-        sha256 = "240deacdd628b6459671b83eb0c4db8e97baadf659f25b92e9a078d536bd513e",
-        strip_prefix = "gperftools-{version}",
-        urls = ["https://github.com/gperftools/gperftools/releases/download/gperftools-{version}/gperftools-{version}.tar.gz"],
+        sha256 = "b09193adedcc679df2387042324d0d54b93d35d062ea9bff0340f342a709e860",
+        strip_prefix = "gperftools-gperftools-{version}",
+        # We use the source URL (not the releases URL) because the source contain 'autogen' and we need to
+        # patch the autoconf file.
+        urls = ["https://github.com/gperftools/gperftools/archive/gperftools-{version}.tar.gz"],
         release_date = "2020-07-06",
         use_category = ["dataplane_core", "controlplane"],
         cpe = "cpe:2.3:a:gperftools_project:gperftools:*",
@@ -239,10 +243,10 @@ REPOSITORY_LOCATIONS_SPEC = dict(
         project_name = "gRPC",
         project_desc = "gRPC C core library",
         project_url = "https://grpc.io",
-        version = "1.34.0",
-        sha256 = "7372a881122cd85a7224435a1d58bc5e11c88d4fb98a64b83f36f3d1c2f16d39",
+        version = "806451e7b95b3050b60d95260c1e3631de4d8e6c",
+        sha256 = "1740321d5d10d875d4ad84bc3256ef2ae57e39d76665ff82e3921a5c061301a2",
         strip_prefix = "grpc-{version}",
-        urls = ["https://github.com/grpc/grpc/archive/v{version}.tar.gz"],
+        urls = ["https://github.com/siepkes/grpc/archive/{version}.tar.gz"],
         use_category = ["dataplane_core", "controlplane"],
         release_date = "2020-12-01",
         cpe = "cpe:2.3:a:grpc:grpc:*",
@@ -623,9 +627,11 @@ REPOSITORY_LOCATIONS_SPEC = dict(
         project_name = "Go rules for Bazel",
         project_desc = "Bazel rules for the Go language",
         project_url = "https://github.com/bazelbuild/rules_go",
-        version = "0.25.0",
-        sha256 = "6f111c57fd50baf5b8ee9d63024874dd2a014b069426156c55adbf6d3d22cb7b",
-        urls = ["https://github.com/bazelbuild/rules_go/releases/download/v{version}/rules_go-v{version}.tar.gz"],
+        # Fork of 0.25.0 with Illumos added.
+        version = "18e787e0408abbb2e18c83666dbb1673a23eee41",
+        sha256 = "f1253935f6199102cc360b906919e394c04efe66ca411b0efcb9f4f4606ff317",
+        strip_prefix = "rules_go-{version}",
+        urls = ["https://github.com/siepkes/rules_go/archive/{version}.tar.gz"],
         use_category = ["build", "api"],
         release_date = "2020-12-02",
         implied_untracked_deps = [
@@ -878,11 +884,13 @@ REPOSITORY_LOCATIONS_SPEC = dict(
         project_name = "upb",
         project_desc = "A small protobuf implementation in C (gRPC dependency)",
         project_url = "https://github.com/protocolbuffers/upb",
-        version = "de76b31f9c56b28120580d53a6f8d7941fdb79eb",
-        sha256 = "487d84ce85065ff89ccde1c1ac2ea1515d2be411306e4adf1be6861dc4a4a86b",
+        # Building upb breaks the build because it pass both the '-Wall' and '-Werror' flags to GCC.
+        # However Google upb includes Google absl which generates warnings and thereby kills the build.
+        version = "231008fa571839db492b69341c724196c1f0fd3c",
+        sha256 = "f524c1ee1da46b1848a00ff805acfbc7399ac09a8831066de5f30a6e58e04d31",
         release_date = "2020-12-29",
         strip_prefix = "upb-{version}",
-        urls = ["https://github.com/protocolbuffers/upb/archive/{version}.tar.gz"],
+        urls = ["https://github.com/siepkes/upb/archive/{version}.tar.gz"],
         use_category = ["controlplane"],
         cpe = "N/A",
     ),

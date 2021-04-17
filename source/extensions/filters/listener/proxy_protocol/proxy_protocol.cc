@@ -1,5 +1,10 @@
 #include "extensions/filters/listener/proxy_protocol/proxy_protocol.h"
 
+#ifdef __sun
+// This is where the FIONREAD macro lives.
+#include <sys/filio.h>
+#endif
+
 #include <algorithm>
 #include <cstddef>
 #include <cstdint>

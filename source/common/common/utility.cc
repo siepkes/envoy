@@ -583,7 +583,7 @@ bool Primes::isPrime(uint32_t x) {
     return false; // eliminates even numbers >2.
   }
 
-  uint32_t limit = sqrt(x);
+  double limit = static_cast<double>(sqrt(static_cast<double>(x)));
   for (uint32_t factor = 3; factor <= limit; factor += 2) {
     if ((x % factor) == 0) {
       return false;

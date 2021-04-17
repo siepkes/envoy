@@ -1,3 +1,8 @@
+#ifdef __sun
+#include <sys/types.h>
+#include <netinet/in.h>
+#endif
+
 #include "common/network/address_impl.h"
 
 #include <array>
@@ -12,6 +17,10 @@
 #include "common/common/safe_memcpy.h"
 #include "common/common/utility.h"
 #include "common/network/socket_interface.h"
+
+#ifdef __sun
+#define s6_addr32 _S6_un._S6_u32
+#endif
 
 namespace Envoy {
 namespace Network {

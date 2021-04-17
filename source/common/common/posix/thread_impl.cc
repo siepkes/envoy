@@ -19,6 +19,8 @@ int64_t getCurrentThreadId() {
   uint64_t tid;
   pthread_threadid_np(nullptr, &tid);
   return tid;
+#elif defined(__sun)
+  return (unsigned long)pthread_self();  
 #else
 #error "Enable and test pthread id retrieval code for you arch in pthread/thread_impl.cc"
 #endif

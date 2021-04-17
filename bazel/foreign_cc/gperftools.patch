@@ -1,0 +1,67 @@
+From ecdf7feb202b6a5a4fe085f53038937ebe4ba528 Mon Sep 17 00:00:00 2001
+From: Jasper Siepkes <siepkes@serviceplanet.nl>
+Date: Sun, 8 Nov 2020 10:26:02 +0100
+Subject: [PATCH] Added Illumos / SmartOS compatibility fixes.
+
+---
+ m4/pc_from_ucontext.m4 | 8 +++++++-
+ src/getpc.h            | 3 +++
+ src/profiler.cc        | 3 +++
+ 3 files changed, 13 insertions(+), 1 deletion(-)
+
+diff --git a/m4/pc_from_ucontext.m4 b/m4/pc_from_ucontext.m4
+index 0c7ee28..ddbde38 100644
+--- a/m4/pc_from_ucontext.m4
++++ b/m4/pc_from_ucontext.m4
+@@ -16,6 +16,9 @@ AC_DEFUN([AC_PC_FROM_UCONTEXT],
+    if grep "Red Hat Linux release 7" /etc/redhat-release >/dev/null 2>&1; then
+      AC_DEFINE(HAVE_SYS_UCONTEXT_H, 0, [<sys/ucontext.h> is broken on redhat 7])
+      ac_cv_header_sys_ucontext_h=no
++   elif grep "SmartOS" /etc/release >/dev/null 2>&1; then
++     # SmartOS has <sys/ucontext.h> but it doesn't work. <ucontext.h>  does work.
++     AC_CHECK_HEADERS(ucontext.h)
+    else
+      AC_CHECK_HEADERS(sys/ucontext.h)       # ucontext on OS X 10.6 (at least)
+    fi
+@@ -66,7 +69,10 @@ AC_DEFUN([AC_PC_FROM_UCONTEXT],
+                         pc_field_found=true)
+        elif test "x$ac_cv_header_sys_ucontext_h" = xyes; then
+          AC_TRY_COMPILE([#define _GNU_SOURCE 1
+-                        #include <sys/ucontext.h>],
++                        #include <sys/ucontext.h>,
++                        #if defined(__sun)
++                        #include <sys/regset.h>
++                        #endif],
+                         [ucontext_t u; return u.$pc_field == 0;],
+                         AC_DEFINE_UNQUOTED(PC_FROM_UCONTEXT, $pc_field,
+                                            How to access the PC from a struct ucontext)
+diff --git a/src/getpc.h b/src/getpc.h
+index 9605363..7fbd86b 100644
+--- a/src/getpc.h
++++ b/src/getpc.h
+@@ -61,6 +61,9 @@
+ #endif
+ #if defined(HAVE_SYS_UCONTEXT_H)
+ #include <sys/ucontext.h>
++#if defined(__sun)
++#include <sys/regset.h>
++#endif
+ #elif defined(HAVE_UCONTEXT_H)
+ #include <ucontext.h>       // for ucontext_t (and also mcontext_t)
+ #elif defined(HAVE_CYGWIN_SIGNAL_H)
+diff --git a/src/profiler.cc b/src/profiler.cc
+index 077b6b8..986affe 100644
+--- a/src/profiler.cc
++++ b/src/profiler.cc
+@@ -46,6 +46,9 @@
+ #endif
+ #if defined(HAVE_SYS_UCONTEXT_H)
+ #include <sys/ucontext.h>
++#if defined(__sun)
++#include <sys/regset.h>
++#endif
+ #elif defined(HAVE_UCONTEXT_H)
+ #include <ucontext.h>
+ #elif defined(HAVE_CYGWIN_SIGNAL_H)
+-- 
+2.26.2
